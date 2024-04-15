@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up/In Form</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/login.css' %}">
+</head>
+<body>
+    <div class="container" id="container">
+    <div class="form-container sign-up-container">
+        <div>
+        <style>
+            h5{ color: #FF4B2B;
+                accent-color: #FF4B2B}
+        </style>
+            {% for message in messages %}
+            <h5> {{ message }}</h5>
+            {% endfor %}
+        </div>
+        <form action="" method="POST" id="signUpForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="register">
+            <h1>Create Account</h1>
+            <span>or use your email for registration</span>
+            <input type="text" name="username" placeholder="Name" required />
+            <input type="email" name="email" placeholder="Email" id="signupEmail" required />
+            <input type="password" name="password" placeholder="Password" required />
+            <input type="password" name="password2" placeholder="Confirm Password" required />
+            <button type="submit">Sign Up</button>
+        </form>
+    </div>
+    <div class="form-container sign-in-container">
+        <form action="" method="POST" id="signInForm">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="login">
+            <h1>Sign in</h1>
+            <span>or use your account</span>
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <a href="#">Forgot your password?</a>
+            <button type="submit">Sign In</button>
+        </form>
+    </div>
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Welcome Back!</h1>
+                <p>Login with your @maine.edu!</p>
+                <button class="ghost" id="signIn">Sign In</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Hello!</h1>
+                <p>Use your @maine.edu to join!</p>
+                <button class="ghost" id="signUp">Sign Up</button>
+            </div>
+        </div>
+    </div>
+</div>
+    <script src="{% static 'js/login.js' %}"></script>
+</body>
+</html>
