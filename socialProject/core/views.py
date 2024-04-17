@@ -21,6 +21,7 @@ def login(request):
         elif action == 'register':
             username = request.POST['username']
             email = request.POST['email']
+            print(email)
             password = request.POST['password']
             password2 = request.POST['password2']
             if password == password2:
@@ -33,8 +34,8 @@ def login(request):
                 else:
                     user = User.objects.create_user(username=username, email=email, password=password)
                     user.save()
-                    user_model = User.objects.get(username=username)
-                    new_profile = Profile.objects.create(user=user_model, id_user=user_model.id)
+                    user_model = User.objects.get(username=username, email=email)
+                    new_profile = Profile.objects.create(user=user_model, email=email, id_user=user_model.id)
                     new_profile.save()
                     return redirect('login')
             else:
@@ -45,10 +46,43 @@ def login(request):
 
 
 def profile(request):
-    user_name = request.user.username
-    profile = Profile.objects.get(user=request.user)
-    profile_img = profile.profileimg
-    return render(request, 'prof.html',{'user_name': user_name, 'profile_img': profile_img })
+    user_profile = Profile.objects.get(user=request.user)
+
+    if request.method == 'POST':
+
+        if request.FILES.get('image') == None:
+            image = user_profile.profileimg
+            bio = request.POST['bio']
+            major = request.POST['major']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            year = request.POST['year']
+
+            user_profile.profileimg = image
+            user_profile.bio = bio
+            user_profile.major = major
+            user_profile.first_name = first_name
+            user_profile.last_name = last_name
+            user_profile.year = year
+            user_profile.save()
+        if request.FILES.get('image') != None:
+            image = request.FILES.get('image')
+            bio = request.POST['bio']
+            major = request.POST['major']
+            first_name = request.POST['first_name']
+            last_name = request.POST['last_name']
+            year = request.POST['year']
+
+            user_profile.profileimg = image
+            user_profile.bio = bio
+            user_profile.major = major
+            user_profile.first_name = first_name
+            user_profile.last_name = last_name
+            user_profile.year = year
+            user_profile.save()
+        return redirect('profile')
+    return render(request, 'prof.html', {'user_profile': user_profile})
+
 
 
 def logout_view(request):

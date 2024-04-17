@@ -5,8 +5,8 @@
 }
 
 body {
-	background: -webkit-linear-gradient(to right, #0e1033,#f5a700);
-	background: linear-gradient(to right, #0e1033, #f5a700);
+	background: -webkit-linear-gradient(to right, #0e1033,#f5a800);
+	background: linear-gradient(to right, #0e1033, #f5a800);
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -160,9 +160,9 @@ input {
 }
 
 .overlay {
-	background: #f5a700;
-	background: -webkit-linear-gradient(to right, #0e1033,#f5a700);
-	background: linear-gradient(to right, #0e1033, #f5a700);
+	background: #f5a800;
+	background: -webkit-linear-gradient(to right, #0e1033,#f5a800);
+	background: linear-gradient(to right, #0e1033, #f5a800);
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: 0 0;

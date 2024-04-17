@@ -37,9 +37,9 @@
             {% csrf_token %}
             <input type="hidden" name="action" value="register">
             <h1>Create Account</h1>
-            <span>or use your email for registration</span>
-            <input type="text" name="username" placeholder="Name" required />
-            <input type="email" name="email" placeholder="Email" id="signupEmail" required />
+            <span>Use @maine.edu</span>
+            <input type="text" name="username" placeholder="Username" required />
+            <input type="email" name="email" placeholder="Email" required />
             <input type="password" name="password" placeholder="Password" required />
             <input type="password" name="password2" placeholder="Confirm Password" required />
             <button type="submit">Sign Up</button>
@@ -50,7 +50,7 @@
             {% csrf_token %}
             <input type="hidden" name="action" value="login">
             <h1>Sign in</h1>
-            <span>or use your account</span>
+            <span>to use your account</span>
             <input type="text" name="username" placeholder="Username" required>
             <input type="password" name="password" placeholder="Password" required>
             <a href="#">Forgot your password?</a>
