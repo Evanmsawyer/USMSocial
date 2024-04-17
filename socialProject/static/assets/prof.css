@@ -145,3 +145,20 @@ body {
         font-weight: bold;
         color: #000;
 }
+.profile-content {
+            padding: 25px;
+            border-radius: 4px
+}
+
+.profile-content:after,
+.profile-content:before {
+    content: '';
+    display: table;
+    clear: both
+}
+
+.profile-content .tab-content,
+.profile-content .tab-pane {
+    background: 0 0
+}
+

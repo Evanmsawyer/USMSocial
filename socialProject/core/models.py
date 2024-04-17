@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
-
+import uuid
+from datetime import datetime
 User = get_user_model()
 
 
@@ -10,7 +11,7 @@ class Profile(models.Model):
     id_user = models.IntegerField()
     first_name = models.TextField(blank=True)
     last_name = models.TextField(blank=True)
-    email = models.EmailField(blank=False)
+    email = models.EmailField(blank=False, default="example@example.com")
     bio = models.TextField(blank=True)
     profileimg = models.ImageField(upload_to='profile_images', default='blank_profile_image.png')
     major = models.CharField(max_length=64)

@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, auth
+from django.contrib.auth.decorators import login_required
 from .models import Profile
 
 
@@ -18,6 +19,7 @@ def login(request):
                 return redirect('profile')
             else:
                 messages.info(request, 'Credentials Invalid')
+                return redirect('login')
         elif action == 'register':
             username = request.POST['username']
             email = request.POST['email']
@@ -45,6 +47,7 @@ def login(request):
         return render(request, 'login.html')
 
 
+@login_required(login_url='login')
 def profile(request):
     user_profile = Profile.objects.get(user=request.user)
 
@@ -84,7 +87,8 @@ def profile(request):
     return render(request, 'prof.html', {'user_profile': user_profile})
 
 
-
+@login_required(login_url='login')
 def logout_view(request):
     logout(request)
     return redirect('login')
+

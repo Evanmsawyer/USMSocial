@@ -11,7 +11,9 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/prof.css' %}">
 </head>
 <style>
-    h3 {text-align: center;}
+    h3 {
+        text-align: center;
+    }
 </style>
 <body>
 <div class="image-container">
@@ -20,6 +22,20 @@
 <div class="container-fluid bg-dark text-light py-2 navbar-container" style="padding-top: 0;">
     <div class="container">
         <div class="d-flex justify-content-end">
+            <div class="col-auto">
+                <form class="position-relative ml-auto">
+                    <div class="usr-search-header">
+                        <div class="input-group user-search">
+                            <input type="text" class="form-control search-chat outline-dark" id="text-srh"
+                                   placeholder="Search Students">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-light"><i class="fa fa-search"
+                                                                                       aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
             <button id="editProfileBtn" class="btn btn-outline-light mr-2">
                 <i class="fa fa-cog mr-1" aria-hidden="true"></i>Edit Profile
             </button>
@@ -127,7 +143,9 @@
                                             <option value="Computer Science">Computer Science</option>
                                             <option value="Criminology">Criminology</option>
                                             <option value="Economics">Economics</option>
-                                            <option value="Electrical and Computer Engineering">Electrical and Computer Engineering</option>
+                                            <option value="Electrical and Computer Engineering">Electrical and Computer
+                                                Engineering
+                                            </option>
                                             <option value="English">English</option>
                                             <option value="Environmental Science">Environmental Science</option>
                                             <option value="Finance">Finance</option>
