@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
-from .models import Profile
+from django.contrib.auth.models import AnonymousUser
+from .models import Profile, Message
 
 
 def login(request):
@@ -47,7 +48,7 @@ def login(request):
         return render(request, 'login.html')
 
 
-@login_required(login_url='login')
+'''#@login_required(login_url='login')
 def profile(request):
     user_profile = Profile.objects.get(user=request.user)
 
@@ -84,8 +85,40 @@ def profile(request):
             user_profile.year = year
             user_profile.save()
         return redirect('profile')
-    return render(request, 'prof.html', {'user_profile': user_profile})
+    return render(request, 'prof.html', {'user_profile': user_profile})'''
 
+# just for testing purpose without authentication
+
+def profile(request):
+    user_profile = None
+
+    if request.user.is_authenticated:
+        user_profile = Profile.objects.get(user=request.user)
+
+        if request.method == 'POST':
+            if request.FILES.get('image') is not None:
+                image = request.FILES.get('image')
+                bio = request.POST.get('bio', '')
+                major = request.POST.get('major', '')
+                first_name = request.POST.get('first_name', '')
+                last_name = request.POST.get('last_name', '')
+                year = request.POST.get('year', '')
+
+                user_profile.profileimg = image
+                user_profile.bio = bio
+                user_profile.major = major
+                user_profile.first_name = first_name
+                user_profile.last_name = last_name
+                user_profile.year = year
+                user_profile.save()
+
+        return render(request, 'prof.html', {'user_profile': user_profile})
+    else:
+        # if user not authenticated
+        return render(request, 'prof.html')
+
+def message_view(request):
+    return render(request, 'message.html')
 
 @login_required(login_url='login')
 def logout_view(request):

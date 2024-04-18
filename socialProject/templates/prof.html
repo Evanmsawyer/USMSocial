@@ -1,4 +1,4 @@
-{% load static %}
+l{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -38,10 +38,15 @@
             </div>
             <button id="editProfileBtn" class="btn btn-outline-light mr-2">
                 <i class="fa fa-cog mr-1" aria-hidden="true"></i>Edit Profile
-            </button>
-            <button id="messageBtn" class="btn btn-outline-light mr-2">
-                <i class="fa fa-inbox mr-1" aria-hidden="true"></i>Messages
-            </button>
+                <button id="messageBtn" class="btn btn-outline-light mr-2">
+                    <i class="fa fa-inbox mr-1" aria-hidden="true"></i>Messages
+                </button>
+                <script>
+                    document.getElementById("messageBtn").addEventListener("click", function() {
+                        // Redirecting the user to the message view
+                        window.location.href = "{% url 'message_view' %}";
+                    });
+                </script>
             <a href="{% url 'logout' %}" class="btn btn-outline-light"><i class="fa fa-sign-out mr-1"
                                                                           aria-hidden="true"></i>Logout</a>
         </div>
