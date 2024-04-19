@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>USM Social</title>
+    <link rel="icon" href="../static/images/USM_footerLogo.png" type="image">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/login.css' %}">
     <style>
         .header-container {
@@ -18,30 +19,34 @@
     </style>
 </head>
 <body>
-<div class="header-container">
-        <h1 style="color: white;">University of Southern Maine</h1>
-        <img src="static/images/huskies.png" alt="University Logo" class="logo-img">
-    </div>
-    <div class="container" id="container">
-    <div class="form-container sign-up-container">
-        <div>
+<div class="ms-1">
         <style>
-            h5{ color: #FF4B2B;
-                accent-color: #FF4B2B}
+            h5 {
+                color: #FF4B2B;
+                accent-color: #FF4B2B
+            }
         </style>
-            {% for message in messages %}
+        {% for message in messages %}
             <h5> {{ message }}</h5>
-            {% endfor %}
-        </div>
+        {% endfor %}
+    </div>
+<div class="header-container">
+
+    <h1 style="color: white;">University of Southern Maine</h1>
+    <img src="static/images/huskies.png" alt="University Logo" class="logo-img">
+</div>
+<div class="container" id="container">
+    <div class="form-container sign-up-container">
+
         <form action="" method="POST" id="signUpForm">
             {% csrf_token %}
             <input type="hidden" name="action" value="register">
             <h1>Create Account</h1>
             <span>Use @maine.edu</span>
-            <input type="text" name="username" placeholder="Username" required />
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Password" required />
-            <input type="password" name="password2" placeholder="Confirm Password" required />
+            <input type="text" name="username" placeholder="Username" required/>
+            <input type="email" name="email" placeholder="Email" required/>
+            <input type="password" name="password" placeholder="Password" required/>
+            <input type="password" name="password2" placeholder="Confirm Password" required/>
             <button type="submit">Sign Up</button>
         </form>
     </div>
@@ -72,6 +77,6 @@
         </div>
     </div>
 </div>
-    <script src="{% static 'js/login.js' %}"></script>
+<script src="{% static 'js/login.js' %}"></script>
 </body>
 </html>

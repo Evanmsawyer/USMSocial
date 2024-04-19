@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>USMSocial search</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/search_tem.css' %}">
+    <style>
+        .header-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="image-container">
+    <img src="../static/images/USM_footerLogo.png" alt="Background Image">
+</div>
+<div class="container-fluid bg-dark text-light py-2 navbar-container" style="padding-top: 0;">
+    <div class="container">
+        <div class="d-flex justify-content-end">
+            {% block content %}
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-auto">
+                            <form class="position-relative ml-auto" method="POST" action="/search">
+                                {% csrf_token %}
+                                <div class="usr-search-header">
+                                    <div class="input-group user-search">
+                                        <input type="text" class="form-control search-chat outline-dark" id="text-srh"
+                                               name="username" placeholder="Search Students">
+                                        <div class="input-group-append">
+                                            <button type="submit" class="btn btn-outline-light"><i class="fa fa-search"
+                                                                                                   aria-hidden="true"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endblock %}
+            <a href="/profile/{{ request.user.username }}" class="btn btn-outline-light mr-2"><i class="fa fa-user mr-1"
+                                                                                                 aria-hidden="true"></i>Profile</a>
+            <a href="{% url 'posts' %}" class="btn btn-outline-light mr-2"><i class="fa fa-share-square-o mr-2"
+                                                                              aria-hidden="true"></i>Posts</a>
+            <button id="messageBtn" class="btn btn-outline-light mr-2">
+                <i class="fa fa-inbox mr-1" aria-hidden="true"></i>Messages
+            </button>
+            <a href="{% url 'logout' %}" class="btn btn-outline-light"><i class="fa fa-sign-out mr-1"
+                                                                          aria-hidden="true"></i>Logout</a>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-md-6">
+            {% for user in user_profile_li %}
+                <div class="container rounded" style="background-color: white; margin-bottom: 20px;">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-3 mt-3">
+                            <img src="{{ user.profileimg.url }}" alt="user" class="profile-photo-lg"
+                                 style="background-color: #0e1033">
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <h5 style="margin-top: 5px"><a href="/profile/{{ user.user }}"
+                                                           class="profile-link">{{ user.user }}</a></h5>
+                            <p><span>Major: </span><span class="text-muted">{{ user.major }}</span></p>
+                            <p><span>Standing: </span><span class="text-muted">{{ user.year }}</span></p>
+                        </div>
+                        <div class="col-md-3 col-sm-3 align-self-center text-center">
+                            <button class="btn btn-outline-secondary"><span class="fa fa-user">Follow</span></button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css"></script>
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

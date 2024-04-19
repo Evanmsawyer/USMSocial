@@ -1,16 +1,18 @@
-	body{
-    margin-top:20px;
+body {
+    margin-top: 20px;
     background: linear-gradient(to right, #0e1033, #f5a800);
 }
+
 .card {
     background-color: #fff;
     border: 0 solid #eee;
     border-radius: 0;
 }
+
 .card {
     margin-bottom: 30px;
-    -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.1), -1px 0 2px rgba(0,0,0,0.05);
-    box-shadow: 2px 2px 2px rgba(0,0,0,0.1), -1px 0 2px rgba(0,0,0,0.05);
+    -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1), -1px 0 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1), -1px 0 2px rgba(0, 0, 0, 0.05);
 }
 
 .card-profile .card-header {
@@ -65,25 +67,30 @@
 .card-header:first-child {
     border-radius: 0 0 0 0;
 }
+
 .card-header:first-child {
     border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
 }
+
 .card-header {
     padding: 1rem 1.25rem;
     background-color: #fff;
     border-bottom: 1px solid #eee;
 }
+
 .card-header {
-    -webkit-box-shadow: 2px 2px 2px rgba(0,0,0,0.05);
-    box-shadow: 2px 2px 2px rgba(0,0,0,0.05);
+    -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.05);
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.05);
 }
+
 body {
     margin: 0;
     padding: 0;
     background: linear-gradient(to right, #0e1033, #f5a800);
 }
+
 .image-container {
-    position: absolute;
+    position: fixed;
     top: 60%;
     left: 58%;
     transform: translate(-50%, -50%);
@@ -92,16 +99,17 @@ body {
     z-index: -1;
     overflow: hidden;
 }
+
 #editProfileBtn {
     background-color: transparent;
-    color: #fff;
-    border-color: #fff;
+    color: #000;
+    border-color: #000;
 }
 
 #editProfileBtn:hover {
-    background-color: rgba(255,255,255,0.2);
-    color: #fff;
-    border-color: #fff;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #000;
+    border-color: #000;
 }
 
 
@@ -117,37 +125,40 @@ body {
     position: relative;
     z-index: 1;
 }
+
 .navbar-container {
     margin-bottom: 20px;
     margin-top: 0;
 }
+
 #currentInfo {
-        background-color: #f2f2f2;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
 }
 
 #currentInfo h3 {
-        color: #333;
-        font-size: 20px;
-        margin-bottom: 10px;
+    color: #333;
+    font-size: 20px;
+    margin-bottom: 10px;
 }
 
 #currentInfo p {
-        margin: 0;
-        color: #666;
-        font-size: 16px;
+    margin: 0;
+    color: #666;
+    font-size: 16px;
 }
 
 #currentInfo span {
-        font-weight: bold;
-        color: #000;
+    font-weight: bold;
+    color: #000;
 }
+
 .profile-content {
-            padding: 25px;
-            border-radius: 4px
+    padding: 25px;
+    border-radius: 4px
 }
 
 .profile-content:after,
