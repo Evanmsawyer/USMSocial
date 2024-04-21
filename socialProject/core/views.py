@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Post, LikedPosts, Followers
+from .models import Profile, Post, LikedPosts, Followers, Comment
 import time
 from .forms import SearchForm
 
@@ -55,6 +55,7 @@ def profile(request, pk):
     user_object = User.objects.get(username=pk)
     user_profile = Profile.objects.get(user=user_object)
     user_posts = Post.objects.filter(user=pk)
+    is_following = Followers.objects.filter(follower=request.user, user=user_profile.user).exists()
     user_followers = len(Followers.objects.filter(user=pk))
     user_following = len(Followers.objects.filter(follower=pk))
     if request.method == 'POST':
@@ -99,30 +100,38 @@ def profile(request, pk):
                       'user_posts': user_posts,
                       'user_followers': user_followers,
                       'user_following': user_following,
+                      'is_following': is_following
                   })
 
 
 @login_required(login_url='login')
 def posted(request):
     if request.method == 'POST':
-        caption = request.POST.get('caption')
-        image = request.FILES.get('image')
+        if 'comment' in request.POST:
+            comment_text = request.POST.get('comment')
+            post_id = request.POST.get('post_id')
+            image = request.FILES.get('image')
+            post = Post.objects.get(pk=post_id)
 
-        if request.user.is_authenticated:
-            post = Post(user=request.user, caption=caption)
+            comment = Comment(user=request.user, text=comment_text)
             if image:
-                post.image = image
-            post.save()
+                comment.comment_img = image
+            comment.save()
+            post.comments.add(comment)
+
+            return redirect(request.META.get('HTTP_REFERER'))
         else:
-            post = Post(caption=caption)
-            if image:
-                post.image = image
-            post.save()
+            caption = request.POST.get('caption')
+            image = request.FILES.get('image')
 
-        return redirect(request.META.get('HTTP_REFERER'))
+            if request.user.is_authenticated:
+                profile = Profile.objects.get(user=request.user)
+                post = Post(user=request.user, caption=caption, profile=profile)
+                if image:
+                    post.image = image
+                post.save()
 
-    posts = Post.objects.all()
-    return render(request, 'profile.html', {'posts': posts})
+            return redirect(request.META.get('HTTP_REFERER'))
 
 
 @login_required(login_url='login')
@@ -133,6 +142,7 @@ def logout_view(request):
 
 @login_required(login_url='login')
 def like(request):
+    request.session['scroll_position'] = request.POST.get('scroll_position', 0)
     username = request.user.username
     post_id = request.GET.get('post_id')
 
@@ -144,12 +154,14 @@ def like(request):
         add_like = LikedPosts.objects.create(post_id=post_id, username=username)
         add_like.save()
         post.no_of_likes = post.no_of_likes + 1
+        post.liked = True
         post.save()
         time.sleep(1)
         return redirect(request.META.get('HTTP_REFERER'))
     else:
         like_filter.delete()
         post.no_of_likes = post.no_of_likes - 1
+        post.liked = False
         post.save()
         time.sleep(1)
         return redirect(request.META.get('HTTP_REFERER'))
@@ -157,9 +169,20 @@ def like(request):
 
 @login_required(login_url='login')
 def posts(request):
-    posts = Post.objects.all().order_by("-created_at")
-    profiles = Profile.objects.all()
-    return render(request, 'posts.html', {'posts': posts, 'profiles': profiles})
+    user = request.user
+    user_following = Followers.objects.filter(follower=user.username).values_list('user', flat=True)
+    user_posts = Post.objects.filter(user=user).order_by("-created_at")
+
+    posts = []
+
+    for username in user_following:
+        feed_lists = Post.objects.filter(user=username).order_by("-created_at")
+        posts.extend(feed_lists)
+    posts.extend(user_posts)
+
+    posts.sort(key=lambda x: x.created_at, reverse=True)
+
+    return render(request, 'posts.html', {'posts': posts})
 
 
 @login_required(login_url='login')
@@ -167,7 +190,7 @@ def follow(request, pk):
     user_object = User.objects.get(username=pk)
     user_profile = Profile.objects.get(user=user_object)
     is_following = Followers.objects.filter(follower=request.user, user=user_profile.user).exists()
-    context = {'user_profile': user_profile, 'is_following': is_following}
+
     if request.method == 'POST':
         follower_username = request.POST.get('follower')
         user_username = request.POST.get('user')
@@ -179,14 +202,11 @@ def follow(request, pk):
 
         return redirect(request.META.get('HTTP_REFERER'))
 
-    return render(request, 'prof.html', context)
-
 
 @login_required(login_url='login')
 def search(request):
     user_object = request.user
     profile = Profile.objects.get(user=user_object)
-
     user_profile_li = []
 
     if request.method == 'POST':
@@ -194,7 +214,28 @@ def search(request):
         users = User.objects.filter(username__icontains=username)
 
         for user in users:
-            profile = Profile.objects.get(user=user)
-            user_profile_li.append(profile)
+            user_profile = Profile.objects.get(user=user)
+            is_following = Followers.objects.filter(follower=request.user, user=user).exists()
+            user_profile_li.append({'profile': user_profile, 'is_following': is_following})
 
-    return render(request, 'search_tem.html', {'profile': profile, 'user_profile_li': user_profile_li})
+    return render(request, 'search_tem.html', {
+        'profile': profile,
+        'user_profile_li': user_profile_li,
+    })
+
+
+@login_required(login_url='login')
+def delete_post(request, post_id):
+    post = Post.objects.get(pk=post_id)
+
+    if request.method == 'POST':
+        if 'comment' in request.POST:
+            comment_ids = request.POST.getlist('comment')
+            Comment.objects.filter(pk__in=comment_ids).delete()
+        else:
+            post.delete()
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+

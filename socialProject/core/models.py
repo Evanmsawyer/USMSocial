@@ -29,9 +29,18 @@ class Post(models.Model):
     caption = models.TextField()
     created_at = models.DateTimeField(default=datetime.now)
     no_of_likes = models.IntegerField(default=0)
+    liked = models.BooleanField(default=False)
+    comments = models.ManyToManyField('Comment', related_name='post_comments', blank=True)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
 
     def __str__(self):
         return self.user
+
+    def get_comments(self):
+        return Comment.objects.filter(post=self)
+
+    def get_profile(self):
+        return self.profile
 
 
 class LikedPosts(models.Model):
@@ -39,11 +48,7 @@ class LikedPosts(models.Model):
     username = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.username
-
-
-class Comments(models.Model):
-    post_id = models.CharField(max_length=500)
+        return self.post_id
 
 
 class Followers(models.Model):
@@ -52,3 +57,16 @@ class Followers(models.Model):
 
     def __str__(self):
         return self.user
+
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    comment_img = models.ImageField(upload_to='comment_images', blank=True)
+    created_at = models.DateTimeField(default=datetime.now)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.text}"
+
+    def get_profile(self):
+        return Profile.objects.get(user=self.user)
