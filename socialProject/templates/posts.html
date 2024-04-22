@@ -50,12 +50,15 @@
                             aria-hidden="true"></i>Profile</a>
                 </li>
                 <li class="nav-item">
+                    <a href="/events" class="btn btn-outline-light mr-2"><i class="fa fa-calendar mr-1"
+                            aria-hidden="true"></i>Events</a>
+                </li>
+                <li class="nav-item">
                     <a href="/chat" id="messageBtn" class="btn btn-outline-light mr-2"><i class="fa fa-inbox mr-1"
                                                                              aria-hidden="true"></i>Messages
                     </a>
                 </li>
                 <li class="nav-item">
-                    </button>
                     <a href="{% url 'logout' %}" class="btn btn-outline-light"><i class="fa fa-sign-out mr-1"
                                                                                   aria-hidden="true"></i>Logout</a>
                 </li>
@@ -63,6 +66,7 @@
         </div>
     </div>
 </nav>
+
 <div class="container posts-content">
     <div class="post-input-container mb-2" style="background-color: white">
         <div class="card-header">
@@ -81,6 +85,19 @@
                         <input type="file" id="post-image" name="image" class="form-control shadow-none"
                                style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-right: none; display: none">
                     </div>
+                    {% for post in posts %}
+                    <div>
+                        <!-- Post content -->
+                        <h2>{{ post.caption }}</h2>
+                        <!-- Check if user is the owner or has admin permissions -->
+                        {% if request.user == post.user or request.user.has_perm('your_app_name.can_delete_posts') %}
+                        <form action="{% url 'delete_post' post.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-outline-secondary"
                                 style="height: 40px; border-left: none"><i class="fa fa-send"></i></button>

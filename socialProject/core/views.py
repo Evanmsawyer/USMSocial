@@ -6,9 +6,17 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Post, LikedPosts, Followers, Comment
+from .models import Profile, Post, LikedPosts, Followers, Comment, Event
+from django.contrib.auth.decorators import permission_required
 import time
 from .forms import SearchForm
+from django.shortcuts import redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required, permission_required
+from .models import Event
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 
 
 def login(request):
@@ -238,4 +246,66 @@ def delete_post(request, post_id):
     return redirect(request.META.get('HTTP_REFERER'))
 
 
+@login_required(login_url='login')
+def create_event(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        description = request.POST.get('description')
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+        location = request.POST.get('location')
+        image = request.FILES.get('image')
+        host_profile = Profile.objects.get(user=request.user)
 
+        event = Event(
+            host=host_profile,
+            title=title,
+            description=description,
+            start_time=start_time,
+            end_time=end_time,
+            location=location,
+            image=image
+        )
+        event.save()
+        messages.success(request, 'Event created successfully!')
+        return redirect('events')
+    else:
+        return render(request, 'create_event.html')
+
+@login_required(login_url='login')
+def events(request):
+    user_profile = Profile.objects.get(user=request.user)
+    user_events = Event.objects.filter(host=user_profile).order_by('-start_time')
+    return render(request, 'events.html', {'events': user_events})
+
+@login_required
+@permission_required('your_app_name.can_delete_posts', raise_exception=True)
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    if request.user == post.user or request.user.has_perm('your_app_name.can_delete_posts'):
+        if request.method == 'POST':
+            post.delete()
+            messages.success(request, 'Post deleted successfully.')
+            return redirect('posts')  # Redirect to the posts listing page
+        else:
+            messages.error(request, 'Invalid request method.')
+            return redirect('posts')
+    else:
+        messages.error(request, 'You do not have permission to delete this post.')
+        return redirect('posts')
+    
+@login_required
+@permission_required('your_app_name.can_delete_events', raise_exception=True)
+def delete_event(request, event_id):
+    event = get_object_or_404(Event, pk=event_id)
+    if request.user == event.host.user or request.user.has_perm('your_app_name.can_delete_events'):
+        if request.method == 'POST':
+            event.delete()
+            messages.success(request, 'Event deleted successfully.')
+            return redirect('events')  # Redirect to the events listing page
+        else:
+            messages.error(request, 'Invalid request method.')
+            return redirect('events')
+    else:
+        messages.error(request, 'You do not have permission to delete this event.')
+        return redirect('events')

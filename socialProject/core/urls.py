@@ -1,4 +1,5 @@
 from django.urls import path, include
+from .views import delete_post, delete_event
 from . import views
 
 urlpatterns = [
@@ -11,4 +12,8 @@ urlpatterns = [
     path('follow/<str:pk>', views.follow, name='follow'),
     path('search', views.search, name='search'),
     path('post/<uuid:post_id>/delete/', views.delete_post, name='delete_post'),
+    path('create_event/', views.create_event, name='create_event'),
+    path('events/', views.events, name='events'),
+    path('post/delete/<int:post_id>/', delete_post, name='delete_post'),
+    path('event/delete/<int:event_id>/', delete_event, name='delete_event'),
 ]

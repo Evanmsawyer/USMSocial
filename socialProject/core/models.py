@@ -41,6 +41,11 @@ class Post(models.Model):
 
     def get_profile(self):
         return self.profile
+    
+    class Meta:
+        permissions = [
+            ("can_delete_posts", "Can delete posts")
+        ]
 
 
 class LikedPosts(models.Model):
@@ -70,3 +75,24 @@ class Comment(models.Model):
 
     def get_profile(self):
         return Profile.objects.get(user=self.user)
+    
+class Event(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    host = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='hosted_events')
+    title = models.CharField(max_length=255)
+    description = models.TextField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    location = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='event_images', blank=True, null=True)
+    created_at = models.DateTimeField(default=datetime.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.title
+    
+    class Meta:
+        permissions = [
+            ("can_delete_events", "Can delete events")
+        ]
+
