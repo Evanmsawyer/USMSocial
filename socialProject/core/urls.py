@@ -3,7 +3,8 @@ from .views import delete_post, delete_event
 from . import views
 
 urlpatterns = [
-    path('', views.login, name='login'),
+    path('', views.index, name='index'),
+    path('login', views.login, name='login'),
     path('profile/<str:pk>', views.profile, name='profile'),
     path('logout/', views.logout_view, name='logout'),
     path('posts/', views.posts, name='posts'),
@@ -16,4 +17,6 @@ urlpatterns = [
     path('events/', views.events, name='events'),
     path('post/delete/<int:post_id>/', delete_post, name='delete_post'),
     path('event/delete/<int:event_id>/', delete_event, name='delete_event'),
+    path('groups', views.group_list, name='group_list'),
+    path('group/<str:group_name>', views.group_view, name='group'),
 ]

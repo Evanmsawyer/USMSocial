@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
-from .models import Profile, Post, LikedPosts, Followers, Comment, Event
+from .models import Profile, Post, LikedPosts, Followers, Comment, Event, Group
 from django.contrib.auth.decorators import permission_required
 import time
 from .forms import SearchForm
@@ -278,21 +278,18 @@ def events(request):
     user_events = Event.objects.filter(host=user_profile).order_by('-start_time')
     return render(request, 'events.html', {'events': user_events})
 
-@login_required
-@permission_required('your_app_name.can_delete_posts', raise_exception=True)
+@login_required(login_url='login')
 def delete_post(request, post_id):
-    post = get_object_or_404(Post, pk=post_id)
-    if request.user == post.user or request.user.has_perm('your_app_name.can_delete_posts'):
-        if request.method == 'POST':
-            post.delete()
-            messages.success(request, 'Post deleted successfully.')
-            return redirect('posts')  # Redirect to the posts listing page
+    post = Post.objects.get(pk=post_id)
+
+    if request.method == 'POST':
+        if 'comment' in request.POST:
+            comment_ids = request.POST.getlist('comment')
+            Comment.objects.filter(pk__in=comment_ids).delete()
         else:
-            messages.error(request, 'Invalid request method.')
-            return redirect('posts')
-    else:
-        messages.error(request, 'You do not have permission to delete this post.')
-        return redirect('posts')
+            post.delete()
+
+    return redirect(request.META.get('HTTP_REFERER'))
     
 @login_required
 @permission_required('your_app_name.can_delete_events', raise_exception=True)
@@ -302,10 +299,79 @@ def delete_event(request, event_id):
         if request.method == 'POST':
             event.delete()
             messages.success(request, 'Event deleted successfully.')
-            return redirect('events')  # Redirect to the events listing page
+            return redirect('events')
         else:
             messages.error(request, 'Invalid request method.')
             return redirect('events')
     else:
         messages.error(request, 'You do not have permission to delete this event.')
         return redirect('events')
+
+
+def index(request):
+    return render(request, 'index.html')
+
+
+@login_required(login_url='login')
+def group_list(request):
+    user = request.user
+
+    if request.method == 'POST':
+        # create a new group
+        grp = Group.objects.create(owner=user)
+        grp.group_name = request.POST.get('name', '')
+        grp.description = request.POST.get('description', '')
+        if request.FILES.get('image') is not None:
+            grp.group_img = request.FILES.get('image')
+        grp.save()
+        grp.members.add(user)
+
+        return redirect(f'group/{grp.group_name}')
+
+    # get all groups user is in
+    grps = user.groups_joined.all()
+    owned = Group.objects.filter(owner=request.user)
+    return render(request, 'group_list.html', {'groups': grps})
+
+
+@login_required(login_url='login')
+def group_view(request, group_name):
+    user_profile = Profile.objects.get(user=request.user)
+    grp = Group.objects.get(group_name=group_name)
+    posts = Post.objects.filter(group_tags=grp)
+
+    ### ADD PERMS TO ALL POST REQUESTS ###
+
+    if request.method == 'POST':
+        action = request.POST.get('action')
+        match action:
+            case 'edit':
+                # edit the group
+                grp = Group.objects.create()
+
+                grp.owner = user_profile
+                grp.group_name = request.POST.get('group_name', '')
+                grp.description = request.POST.get('description', '')
+                if request.FILES.get('image') is not None:
+                    grp.group_img = request.FILES.get('image')
+                grp.save()
+            case 'add_member':
+                # add a new member by username
+                username = request.POST.get('username')
+                new_member = User.objects.get(username=username)
+                grp.members.add(new_member)
+            case 'remove_member':
+                # remove an existing member
+                username = request.POST.get('username')
+                old_member = Profile.objects.get(user__username=username)
+                grp.members.remove(old_member)
+            case 'delete':
+                grp.delete()
+        return redirect(request.META.get('HTTP_REFERER'))
+
+    return render(request, 'group.html',
+                  {'group': grp,
+                   'members': grp.members.all(),
+                   'member_count': grp.members.count(),
+                   'posts': posts
+                   })

@@ -45,20 +45,16 @@
                 <li class="nav-item">
                     <a href="/profile/{{ request.user.username }}" class="btn btn-outline-light mr-2"><i
                             class="fa fa-user mr-1"
-                            aria-hidden="true"></i>Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a href="/events" class="btn btn-outline-light mr-2"><i class="fa fa-calendar mr-1"
-                            aria-hidden="true"></i>Events</a>
+                            aria-hidden="true"></i>{{ request.user.username }}</a>
                 </li>
                 <li class="nav-item">
                     <a href="/chat" id="messageBtn" class="btn btn-outline-light mr-2"><i class="fa fa-inbox mr-1"
-                            aria-hidden="true"></i>Messages
+                                                                                          aria-hidden="true"></i>Messages
                     </a>
                 </li>
                 <li class="nav-item">
                     <a href="{% url 'logout' %}" class="btn btn-outline-light"><i class="fa fa-sign-out mr-1"
-                            aria-hidden="true"></i>Logout</a>
+                                                                                  aria-hidden="true"></i>Logout</a>
                 </li>
             </ul>
         </div>
@@ -74,7 +70,8 @@
                     <input type="text" name="title" class="form-control" placeholder="Event Title" required>
                 </div>
                 <div class="input-group mb-3">
-                    <textarea name="description" class="form-control" placeholder="Event Description" required></textarea>
+                    <textarea name="description" class="form-control" placeholder="Event Description"
+                              required></textarea>
                 </div>
                 <div class="input-group mb-3">
                     <input type="datetime-local" name="start_time" class="form-control" required>
@@ -85,8 +82,14 @@
                 <div class="input-group mb-3">
                     <input type="text" name="location" class="form-control" placeholder="Location" required>
                 </div>
-                <div class="input-group mb-3">
-                    <input type="file" name="image" class="form-control-file">
+                <div class="input-group-append" id="post-image-div">
+                    <label for="post-image" class="btn btn-outline-secondary"
+                           style="height: 40px;">
+                        <i class="fa fa-file-image-o" aria-hidden="true"></i>
+                        Choose Image
+                    </label>
+                    <input type="file" id="post-image" name="image" class="form-control shadow-none"
+                           style="border-top-left-radius: 0; border-bottom-left-radius: 0; display: none">
                 </div>
                 <div class="input-group mb-3">
                     <button type="submit" class="btn btn-primary">Create Event</button>
@@ -97,28 +100,28 @@
     <!-- Display Events -->
     <div class="row">
         {% for event in events %}
-        <div class="col-lg-6">
-            <div class="card mb-4">
-                <div class="card-body">
-                    {% if perms.your_app_name.can_delete_events %}
-                    <form method="post" action="{% url 'delete_event' event.id %}">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-danger">Delete Event</button>
-                    </form>
-                    {% endif %}
-                    <h5 class="card-title">{{ event.title }}</h5>
-                    <p class="card-text">{{ event.description }}</p>
-                    <p class="small text-muted">Start: {{ event.start_time|date:"D, d M Y H:i" }}</p>
-                    <p class="small text-muted">End: {{ event.end_time|date:"D, d M Y H:i" }}</p>
-                    <p class="small text-muted">Location: {{ event.location }}</p>
-                    {% if event.image %}
-                    <img src="{{ event.image.url }}" class="card-img-top" alt="Event Image">
-                    {% endif %}
-                   
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        {% if perms.your_app_name.can_delete_events %}
+                            <form method="post" action="{% url 'delete_event' event.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete Event</button>
+                            </form>
+                        {% endif %}
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text">{{ event.description }}</p>
+                        <p class="small text-muted">Start: {{ event.start_time|date:"D, d M Y H:i" }}</p>
+                        <p class="small text-muted">End: {{ event.end_time|date:"D, d M Y H:i" }}</p>
+                        <p class="small text-muted">Location: {{ event.location }}</p>
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="card-img-top" alt="Event Image">
+                        {% endif %}
 
+
+                    </div>
                 </div>
             </div>
-        </div>
         {% endfor %}
     </div>
 </div>

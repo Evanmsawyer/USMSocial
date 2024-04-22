@@ -47,15 +47,22 @@
                 <li class="nav-item">
                     <a href="/profile/{{ request.user.username }}" class="btn btn-outline-light mr-2"><i
                             class="fa fa-user mr-1"
-                            aria-hidden="true"></i>Profile</a>
+                            aria-hidden="true"></i>{{ request.user.username }}</a>
                 </li>
+
                 <li class="nav-item">
                     <a href="/events" class="btn btn-outline-light mr-2"><i class="fa fa-calendar mr-1"
-                            aria-hidden="true"></i>Events</a>
+                                                                            aria-hidden="true"></i>Events</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'group_list' %}" id="messageBtn" class="btn btn-outline-light mr-2"><i
+                            class="fa fa-users mr-1"
+                            aria-hidden="true"></i>Groups
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a href="/chat" id="messageBtn" class="btn btn-outline-light mr-2"><i class="fa fa-inbox mr-1"
-                                                                             aria-hidden="true"></i>Messages
+                                                                                          aria-hidden="true"></i>Messages
                     </a>
                 </li>
                 <li class="nav-item">
@@ -76,6 +83,14 @@
             <textarea type="text" id="caption" name="caption" placeholder="Caption"
                       class="form-control input-group-append"
                       style="height: 40px"></textarea>
+                    <div class="input-group-append" id="post-group-div">
+                        <select name="group" class="form-control custom-select" style="height: 40px">
+                            <option value="">No Group</option>
+                            {% for group in request.user.groups_joined.all %}
+                                <option value="{{ group }}">{{ group }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                     <div class="input-group-append" id="post-image-div">
                         <label for="post-image" class="btn btn-outline-secondary"
                                style="height: 40px; border-right: none">
@@ -86,17 +101,14 @@
                                style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-right: none; display: none">
                     </div>
                     {% for post in posts %}
-                    <div>
-                        <!-- Post content -->
-                        <h2>{{ post.caption }}</h2>
-                        <!-- Check if user is the owner or has admin permissions -->
-                        {% if request.user == post.user or request.user.has_perm('your_app_name.can_delete_posts') %}
-                        <form action="{% url 'delete_post' post.id %}" method="post">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                        {% endif %}
-                    </div>
+                        <div>
+                            {% if request.user == post.user %}
+                                <form action="{% url 'delete_post' post.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-outline-secondary"

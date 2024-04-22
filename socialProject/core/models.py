@@ -96,3 +96,12 @@ class Event(models.Model):
             ("can_delete_events", "Can delete events")
         ]
 
+class Group(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='groups_owned')
+    members = models.ManyToManyField(User, related_name='groups_joined')
+    description = models.TextField(blank=True)
+    group_name = models.TextField(blank=False, unique=True)
+    group_img = models.ImageField(upload_to='group_images', default='blank_profile_image.png')
+
+    def __str__(self):
+        return self.group_name

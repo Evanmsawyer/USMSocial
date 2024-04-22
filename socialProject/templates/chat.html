@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <title>USMSocial Chat</title>
+    <link rel="icon" href="../static/images/USM_footerLogo.png" type="image">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/chat.css' %}">
@@ -65,7 +67,7 @@
                 <li class="nav-item">
                     <a href="/profile/{{ request.user.username }}" class="btn btn-outline-light mr-2"><i
                             class="fa fa-user mr-1"
-                            aria-hidden="true"></i>Profile</a>
+                            aria-hidden="true"></i>{{ request.user.username }}</a>
                 </li>
                 <li class="nav-item">
                     <a href="/posts" class="btn btn-outline-light mr-2"><i class="fa fa-share-square-o mr-2"
