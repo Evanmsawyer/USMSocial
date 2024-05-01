@@ -1,0 +1,364 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+
+
+    <title>{{ group.group_name }}</title>
+    <link rel="icon" href="../static/images/USM_footerLogo.png" type="image">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/group.css' %}">
+</head>
+<style>
+    .media img.ui-w-40 {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #0e1033;
+    }
+
+    .card {
+        background-color: #fff;
+        border: 1px solid rgba(24, 28, 33, 0.06);
+        border-radius: 0.25rem;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .ui-rect {
+        position: relative;
+        display: block;
+        padding-top: 60%;
+        background-color: transparent;
+        background-position: center center;
+        background-size: cover;
+    }
+
+</style>
+<body>
+<div class="image-container">
+    <img src="../static/images/USM_footerLogo.png" alt="Background Image">
+</div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#"><img src="../static/images/USM_footerLogo.png" style="width: 25px; height: 25px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <form class="position-relative ml-auto" method="POST" action="/search">
+                        {% csrf_token %}
+                        <div class="usr-search-header">
+                            <div class="input-group user-search">
+                                <input type="text" class="form-control search-chat outline-dark" id="text-srh"
+                                       name="username" placeholder="Search Students">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-outline-light"><i class="fa fa-search"
+                                                                                           aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="/posts" class="btn btn-outline-light mr-2"><i class="fa fa-share-square-o mr-2"
+                                                                   aria-hidden="true"></i>Posts</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/events" class="btn btn-outline-light mr-2"><i class="fa fa-calendar mr-1"
+                                                                            aria-hidden="true"></i>Events</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/chat" id="messageBtn" class="btn btn-outline-light mr-2"><i class="fa fa-inbox mr-1"
+                                                                             aria-hidden="true"></i>Messages
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'group_list' %}" id="messageBtn" class="btn btn-outline-light mr-2"><i class="fa fa-users mr-1"
+                                                                             aria-hidden="true"></i>Groups</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'logout' %}" class="btn btn-outline-light"><i class="fa fa-sign-out mr-1"
+                                                                                  aria-hidden="true"></i>Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container" id="profileContainer" style="padding: 65px">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="card card-profile rounded">
+                <div id="profileInfo" style="display: none;">
+                    <div id="currentInfo">
+                        <h3>Group Information</h3>
+                        <p>Owner: <span class="ml-1" id="group_owner">{{ group.owner }}</span></p>
+                        <p>Description: <span class="ml-1" id="group_description">{{ group.description }}</span></p>
+                    </div>
+                </div>
+                <div style="background-image: url(../static/images/usm.jpg);" class="card-header"></div>
+                <div class="card-body text-center"><img src="{{ group.group_img.url }}" class="card-profile-img"
+                                                        style="background-color: #0e1033;">
+
+                    <h3 class="mb-1">{{ group.group_name }}</h3>
+
+                    <p class="text-center mb-0" style="font-size: 0.8em;">Members: {{ member_count }}</p>
+                    <hr/>
+                    <div class="d-flex justify-content-center">
+                        <button id="more" class="btn btn-outline-dark btn-sm mr-1"><i class="fa fa-info mr-1"
+                                                                                      aria-hidden="true"></i>More
+                        </button>
+                        {% if request.user == group.owner %}
+                            <button id="editProfileBtn" class="btn btn-outline-dark btn-sm">
+                                <i class="fa fa-cog mr-1" aria-hidden="true"></i>Edit Group
+                            </button>
+                        {% endif %}
+                    </div>
+                    <hr/>
+                    <h3 class="mb-1">Members</h3>
+                    {% for member in members %}
+                    <div class="media mb-1">
+                    {{ member.profile.profileimg }}
+                        <img src="{{ member.profile.profileimg.url }}"
+                        class="d-block ui-w-40 rounded-circle" style="background-color: #0e1033;"
+                        alt>
+                        <div class="media-body ml-1">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="/profile/{{ member }}"><strong>{{ member }}</strong></a>
+                                {% if group.owner == request.user and group.owner != member %}
+                                <form action="{% url 'group' group.group_name %}" method="POST"
+                                      class="d-inline-block">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="remove_member">
+                                    <input type="hidden" name="username" value="{{ member }}">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"
+                                            style="border: none; "><i class="fa fa-trash"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <form action="{% url 'group' group.group_name %}" method="POST"
+                      class="card-footer">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="add_member">
+                      <div class="form-group input-group-append ml-1">
+                        <input type="text" name="username" placeholder="Username">
+                        <div class="input-group-append" style="border-left: none">
+                        <button type="submit" class="btn btn-outline-secondary">Add User</button>
+                          </div>
+                      </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <div class="card rounded">
+                {% if request.user == group.owner %}
+                    <div id="editProfileContainer" style="display: none;">
+                        <form action="" method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="edit">
+                            <div class="card-body">
+                                <h3 class="card-title">Edit Group</h3>
+                                <div class="col-span-2 mb-5">
+                                    <label for=""> Group Image</label>
+                                    <br>
+                                    <input type="file" name="image" value="" class="shadow-none bg-gray-10">
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-3">
+                                        <div class="form-group mb-4">
+                                            <label for="" class="form-label">Group Name</label>
+                                            <input type="text" name="group_name" placeholder="Group name"
+                                                   value="" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group mb-0">
+                                            <label for="" class="form-label">Description</label>
+                                            <textarea name="description" rows="5" placeholder="Describe your group!"
+                                                      class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-right">
+                                <button type="submit" class="btn btn-primary">Update Group</button>
+                            </div>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="container posts-content">
+                <div class="row">
+                    {% for post in group.post_set.all %}
+                        <div class="col-lg-6">
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <div class="media mb-3">
+                                        <img src="{{ post.user.profile.profileimg.url }}"
+                                             class="d-block ui-w-40 rounded-circle" style="background-color: #0e1033;"
+                                             alt>
+                                        <div class="media-body ml-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <a href="/profile/{{ post.user }}"><strong>{{ post.user }}</strong></a>
+                                                {% if post.user == request.user %}
+                                                    <form method="post" action="{% url 'delete_post' post.id %}"
+                                                          class="d-inline-block">
+                                                        {% csrf_token %}
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                                style="border: none; "><i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                            <div class="text-muted small">{{ post.created_at }}</div>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                    <p>
+                                        {{ post.caption }}
+                                    </p>
+                                    {% if post.image %}
+                                        <a href="javascript:void(0)" class="ui-rect ui-bg-cover"
+                                           style="background-image: url({{ post.image.url }});"></a>
+                                    {% endif %}
+                                </div>
+                                <div class="card-footer">
+                                    <a href="/like?post_id={{ post.id }}" class="like-link">
+                                        <button class="like-btn" style="border: none" data-liked="{{ post.liked }}">
+                                            <strong class="like-count">{{ post.no_of_likes }}</strong>
+                                            <small class="align-middle">
+                                                {% if post.liked %}
+                                                    <i class="fa fa-heart liked"></i>
+                                                {% else %}
+                                                    <i class="fa fa-heart-o"></i>
+                                                {% endif %}
+                                            </small>
+                                        </button>
+                                    </a>
+
+                                    <a href="javascript:void(0)" class="d-inline-block text-muted ml-3 toggle-comments"
+                                       data-target="#comments_{{ post.id }}">
+                                        <strong>{{ post.comments.count }}</strong> <small
+                                            class="align-middle"><i class="fa fa-comment"></i> </small>
+                                    </a>
+                                </div>
+                                <div class="card-body comments-section" style="display: none;"
+                                     id="comments_{{ post.id }}">
+                                    <form method="post" action="{% url 'posted' %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="input-group ml-1 mr-1 rounded">
+                                            <input type="hidden" name="post_id" value="{{ post.id }}">
+                                            <input name="comment" type="text" class="form-control rounded"
+                                                   placeholder="Add a comment" style="height: 40px">
+                                            <div class="input-group-append" id="post-image-div">
+                                                <label for="comment-image" class="btn btn-outline-secondary"
+                                                       style="height: 40px; border-right: none">
+                                                    <i class="fa fa-file-image-o" aria-hidden="true"></i>
+                                                </label>
+                                                <input type="file" id="comment-image" name="image"
+                                                       class="form-control shadow-none"
+                                                       style="border-top-left-radius: 0; border-bottom-left-radius: 0; border-right: none; display: none">
+                                            </div>
+                                            <div class="input-group-append">
+                                                <button type="submit" class="btn btn-outline-secondary mr-2"
+                                                        style="height: 40px"><i class="fa fa-paper-plane"></i></button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                    <hr/>
+                                    <hr/>
+                                    <p>Comments:</p>
+                                    <hr/>
+                                    <div>
+                                        {% for comment in post.comments.all %}
+                                            <div class="post-comment mb-2" style="display: flex; align-items: center;">
+                                                <img src="{{ comment.get_profile.profileimg.url }}" alt=""
+                                                     class="profile-photo-sm"
+                                                     style="height: 40px; width: 40px; border-radius: 50%; margin-right: 10px;">
+                                                <div style="overflow: hidden; flex: 1;">
+                                                    <p style="margin: 0;"><a href="/profile/{{ comment.user }}"
+                                                                             class="profile-link">{{ comment.user }}</a>
+                                                    </p>
+                                                    <p style="margin: 0;">{{ comment.text }}</p>
+                                                    {% if comment.comment_img %}
+                                                        <div class="comment-image rounded"
+                                                             style="object-fit: contain; height: 200px; width: 200px; border: solid 1px black; overflow: hidden;">
+                                                            <img src="{{ comment.comment_img.url }}"
+                                                                 style="display: block; max-width: 100%; max-height: 100%; object-fit: contain;">
+                                                        </div>
+                                                    {% endif %}
+                                                </div>
+                                                {% if comment.user.username == request.user.username %}
+                                                    <form method="post" action="{% url 'delete_post' post.id %}"
+                                                          style="margin-left: auto;">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="comment"
+                                                               value="{{ comment.id }}">
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                                style="border: none;">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                            <hr/>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    var scrollPosition = {% if request.session.scroll_position %}{{ request.session.scroll_position }}{% else %}0{% endif %};
+    $(document).ready(function () {
+        $("#editProfileBtn").click(function () {
+            $("#editProfileContainer").slideToggle("slow");
+        });
+
+        $("#editProfileContainer").hide();
+    });
+    $(document).ready(function () {
+        $("#more").click(function () {
+            $("#profileInfo").slideToggle("slow")
+        });
+    });
+    $(document).ready(function () {
+        $('.toggle-comments').click(function (e) {
+            e.preventDefault();
+            var targetId = $(this).data('target');
+            $(targetId).slideToggle();
+        });
+    });
+
+
+    window.scrollTo(0, scrollPosition);
+</script>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,166 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>USMSocial Events</title>
+    <link rel="icon" href="{% static 'images/USM_footerLogo.png' %}" type="image">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/posts.css' %}">
+</head>
+<body>
+<div class="image-container">
+    <img src="{% static 'images/USM_footerLogo.png' %}" alt="Background Image">
+</div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#"><img src="{% static 'images/USM_footerLogo.png' %}"
+                                              style="width: 25px; height: 25px"></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <form class="position-relative ml-auto" method="POST" action="/search">
+                        {% csrf_token %}
+                        <div class="usr-search-header">
+                            <div class="input-group user-search">
+                                <input type="text" class="form-control search-chat outline-dark" id="text-srh"
+                                       name="username" placeholder="Search Students">
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-outline-light"><i class="fa fa-search"
+                                                                                           aria-hidden="true"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="/profile/{{ request.user.username }}" class="btn btn-outline-light mr-2"><i
+                            class="fa fa-user mr-1"
+                            aria-hidden="true"></i>{{ request.user.username }}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/posts" class="btn btn-outline-light mr-2"><i class="fa fa-share-square-o mr-2"
+                                                                   aria-hidden="true"></i>Posts</a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="{% url 'group_list' %}" id="messageBtn" class="btn btn-outline-light mr-2"><i
+                            class="fa fa-users mr-1"
+                            aria-hidden="true"></i>Groups
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/chat" id="messageBtn" class="btn btn-outline-light mr-2"><i class="fa fa-inbox mr-1"
+                                                                                          aria-hidden="true"></i>Messages
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{% url 'logout' %}" class="btn btn-outline-light"><i class="fa fa-sign-out mr-1"
+                                                                                  aria-hidden="true"></i>Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container posts-content">
+    <!-- Event Creation Form -->
+    <div class="post-input-container mb-4" style="background-color: white">
+        <div class="card-header">
+            <form id="eventForm" action="{% url 'create_event' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input type="text" name="title" class="form-control" placeholder="Event Title" required>
+                </div>
+                <div class="input-group mb-3">
+                    <textarea name="description" class="form-control" placeholder="Event Description"
+                              required></textarea>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="datetime-local" name="start_time" class="form-control" required>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="datetime-local" name="end_time" class="form-control" required>
+                </div>
+                <div class="input-group mb-3">
+                    <input type="text" name="location" class="form-control" placeholder="Location" required>
+                </div>
+                <div class="input-group-append" id="post-image-div">
+                    <label for="post-image" class="btn btn-outline-secondary"
+                           style="height: 40px;">
+                        <i class="fa fa-file-image-o" aria-hidden="true"></i>
+                        Choose Image
+                    </label>
+                    <input type="file" id="post-image" name="image" class="form-control shadow-none"
+                           style="border-top-left-radius: 0; border-bottom-left-radius: 0; display: none">
+                </div>
+                <div class="input-group mb-3">
+                    <button type="submit" class="btn btn-primary">Create Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Display Events -->
+    <div class="row">
+        {% for event in events %}
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        {% if perms.your_app_name.can_delete_events %}
+                            <form method="post" action="{% url 'delete_event' event.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete Event</button>
+                            </form>
+                        {% endif %}
+                        <h5 class="card-title">{{ event.title }}</h5>
+                        <p class="card-text">{{ event.description }}</p>
+                        <p class="small text-muted">Start: {{ event.start_time|date:"D, d M Y H:i" }}</p>
+                        <p class="small text-muted">End: {{ event.end_time|date:"D, d M Y H:i" }}</p>
+                        <p class="small text-muted">Location: {{ event.location }}</p>
+                        {% if event.image %}
+                            <img src="{{ event.image.url }}" class="card-img-top" alt="Event Image">
+                        {% endif %}
+
+
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.toggle-comments').click(function (e) {
+            e.preventDefault();
+            var targetId = $(this).data('target');
+            $(targetId).slideToggle();
+        });
+    });
+
+    function saveScrollPosition() {
+        localStorage.setItem('scrollPosition', window.pageYOffset);
+    }
+
+    function scrollToSavedPosition() {
+        var savedPosition = localStorage.getItem('scrollPosition');
+        if (savedPosition !== null) {
+            window.scrollTo(0, savedPosition);
+        }
+    }
+
+    window.addEventListener('scroll', saveScrollPosition);
+
+    window.addEventListener('load', scrollToSavedPosition);
+</script>
+</body>
+</html>

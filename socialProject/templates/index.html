@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>USMSocial</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        .image-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-image: url('../static/images/USM_DigitalSwag_BackCove_Desktop.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .text-container {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(to right, #0e1033 , #f5a800,#0e1033 );
+            opacity: 0.8;
+            padding: 20px;
+            border-radius: 10px;
+            width: 660px;
+            height: 300px;
+            overflow: auto;
+
+        }
+
+        .content {
+            text-align: center;
+        }
+
+        h2, p {
+            color: white;
+            font-family: "Adobe Garamond Pro", Garamond, serif;
+        }
+    </style>
+</head>
+<body>
+<div class="image-container">
+    <div class="text-container">
+        <div class="content">
+            <div class="text">
+                <h2>USMSocial</h2>
+                <p>The University of Southern Maine (USM) is a public university with campuses in
+                    Portland, Gorham and Lewiston in the U.S. state of Maine. It is the southernmost of the University
+                    of Maine System. It was founded as two separate state universities, Gorham Normal School and
+                    Portland University. The two universities, later known as Gorham State College and the University of
+                    Maine at Portland, were combined in 1970 to help streamline the public university system in Maine
+                    and eventually expanded by adding the Lewiston campus in 1988.</p>
+            </div>
+            <div>
+                <a href="/login" id="messageBtn" class="btn btn-outline-light mr-2"><i class="fa fa-inbox mr-1"
+                                                                                       aria-hidden="true"></i>Login/Sign Up
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
