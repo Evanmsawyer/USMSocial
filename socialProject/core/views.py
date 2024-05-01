@@ -363,7 +363,7 @@ def group_view(request, group_name):
             case 'remove_member':
                 # remove an existing member
                 username = request.POST.get('username')
-                old_member = Profile.objects.get(user__username=username)
+                old_member = User.objects.get(username=username)
                 grp.members.remove(old_member)
             case 'delete':
                 grp.delete()

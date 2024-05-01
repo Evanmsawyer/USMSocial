@@ -76,6 +76,10 @@
                                                                    aria-hidden="true"></i>Posts</a>
                 </li>
                 <li class="nav-item">
+                    <a href="/events" class="btn btn-outline-light mr-2"><i class="fa fa-calendar mr-1"
+                                                                            aria-hidden="true"></i>Events</a>
+                </li>
+                <li class="nav-item">
                     <a href="/chat" id="messageBtn" class="btn btn-outline-light mr-2"><i class="fa fa-inbox mr-1"
                                                                              aria-hidden="true"></i>Messages
                     </a>
@@ -126,6 +130,7 @@
                     <h3 class="mb-1">Members</h3>
                     {% for member in members %}
                     <div class="media mb-1">
+                    {{ member.profile.profileimg }}
                         <img src="{{ member.profile.profileimg.url }}"
                         class="d-block ui-w-40 rounded-circle" style="background-color: #0e1033;"
                         alt>

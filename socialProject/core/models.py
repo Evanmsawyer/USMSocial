@@ -32,7 +32,7 @@ class Post(models.Model):
     liked = models.BooleanField(default=False)
     comments = models.ManyToManyField('Comment', related_name='post_comments', blank=True)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts', null=True, blank=True)
-
+    group_tags = models.ManyToManyField("Group")
     def __str__(self):
         return self.user
 
