@@ -8,28 +8,28 @@
  - [Anusha Ghimire](https://github.com/anu-sha19)
 ------
 ## Special Thanks 
-We would like to thank [Dr. Song](https://yuqi-song.github.io/) for giving us opportuinity to work on this project. 
+We would like to thank [Dr. Song](https://yuqi-song.github.io/) for giving us the opportunity to work on this project. 
 
 -----
 
 ## Features
 
 - User authentication, registration, and login
-- Edit profile, and update profile picture
+- Edit profile and update profile picture
 - Post posts, make groups, join groups
-- User feed, displays posts from followed users
+- User feed displays posts from followed users
 - Ability to follow users
 - Chat room
 - Search users
 - Make events
 - Interact with posts (like, comment)
-- Delete posts, and comments
+- Delete posts and comments
 
 ## Usage
 
 ![usage](img/terminal.gif)
 
-- #### Make migrations and run server
+- #### Make migrations and run the server
 ![run](img/carbon.png)
 
 ----
@@ -63,4 +63,4 @@ We would like to thank [Dr. Song](https://yuqi-song.github.io/) for giving us op
 
 ### Additional details
 
-- This project is part of software enginering course at [University of Southern Maine](https://usm.maine.edu/)
+- This project is part of a software engineering course at [University of Southern Maine](https://usm.maine.edu/)
