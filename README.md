@@ -1,16 +1,13 @@
 ![banner](img/USM_Social.png)
 
-------
 # Huskies :wolf: (Authors)
  - [Jere Perisic](https://github.com/PerisicJere)
  - [Evan Sawyer](https://github.com/Evanmsawyer)
  - [Corey Reinholdtsen](https://github.com/CjamesR10)
  - [Anusha Ghimire](https://github.com/anu-sha19)
-------
 ## Special Thanks 
-We would like to thank [Dr. Song](https://yuqi-song.github.io/) for giving us the opportunity to work on this project. 
+We want to thank [Dr. Song](https://yuqi-song.github.io/) for allowing us to work on this project. 
 
------
 
 ## Features
 
@@ -28,11 +25,12 @@ We would like to thank [Dr. Song](https://yuqi-song.github.io/) for giving us th
 ## Usage
 
 ![usage](img/terminal.gif)
+<hr/>
 
 - #### Make migrations and run the server
 ![run](img/carbon.png)
 
-----
+
 
 ## Demo 
 - USM Social feature demo
