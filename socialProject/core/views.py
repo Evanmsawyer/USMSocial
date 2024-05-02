@@ -1,25 +1,15 @@
-from urllib import request
-from itertools import chain
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.models import User, auth
 from django.contrib.auth.decorators import login_required
 from .models import Profile, Post, LikedPosts, Followers, Comment, Event, Group
-from django.contrib.auth.decorators import permission_required
 import time
-from .forms import SearchForm
-from django.shortcuts import redirect, get_object_or_404
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required, permission_required
-from .models import Event
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
-
 
 def login(request):
+    """
+        Handles user login and registration.
+    """
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'login':
@@ -60,6 +50,9 @@ def login(request):
 
 @login_required(login_url='login')
 def profile(request, pk):
+    """
+        Renders user profile page.
+    """
     user_object = User.objects.get(username=pk)
     user_profile = Profile.objects.get(user=user_object)
     user_posts = Post.objects.filter(user=pk)
@@ -114,6 +107,9 @@ def profile(request, pk):
 
 @login_required(login_url='login')
 def posted(request):
+    """
+        Handles user posts and comments.
+    """
     if request.method == 'POST':
         if 'comment' in request.POST:
             comment_text = request.POST.get('comment')
@@ -144,12 +140,18 @@ def posted(request):
 
 @login_required(login_url='login')
 def logout_view(request):
+    """
+        Logs out the user and redirects to login page.
+    """
     logout(request)
     return redirect('login')
 
 
 @login_required(login_url='login')
 def like(request):
+    """
+        Handles post like/unlike functionality.
+    """
     request.session['scroll_position'] = request.POST.get('scroll_position', 0)
     username = request.user.username
     post_id = request.GET.get('post_id')
@@ -177,6 +179,9 @@ def like(request):
 
 @login_required(login_url='login')
 def posts(request):
+    """
+        Renders posts page with user's and following users' posts.
+    """
     user = request.user
     user_following = Followers.objects.filter(follower=user.username).values_list('user', flat=True)
     user_posts = Post.objects.filter(user=user).order_by("-created_at")
@@ -195,6 +200,9 @@ def posts(request):
 
 @login_required(login_url='login')
 def follow(request, pk):
+    """
+        Handles follow/unfollow functionality for users.
+    """
     user_object = User.objects.get(username=pk)
     user_profile = Profile.objects.get(user=user_object)
     is_following = Followers.objects.filter(follower=request.user, user=user_profile.user).exists()
@@ -213,6 +221,9 @@ def follow(request, pk):
 
 @login_required(login_url='login')
 def search(request):
+    """
+        Renders search results based on user input.
+    """
     user_object = request.user
     profile = Profile.objects.get(user=user_object)
     user_profile_li = []
@@ -231,23 +242,11 @@ def search(request):
         'user_profile_li': user_profile_li,
     })
 
-
-@login_required(login_url='login')
-def delete_post(request, post_id):
-    post = Post.objects.get(pk=post_id)
-
-    if request.method == 'POST':
-        if 'comment' in request.POST:
-            comment_ids = request.POST.getlist('comment')
-            Comment.objects.filter(pk__in=comment_ids).delete()
-        else:
-            post.delete()
-
-    return redirect(request.META.get('HTTP_REFERER'))
-
-
 @login_required(login_url='login')
 def create_event(request):
+    """
+        Handles creation of events by users.
+    """
     if request.method == 'POST':
         title = request.POST.get('title')
         description = request.POST.get('description')
@@ -274,12 +273,18 @@ def create_event(request):
 
 @login_required(login_url='login')
 def events(request):
+    """
+        Renders events page displaying user's created events.
+    """
     user_profile = Profile.objects.get(user=request.user)
     user_events = Event.objects.filter(host=user_profile).order_by('-start_time')
     return render(request, 'events.html', {'events': user_events})
 
 @login_required(login_url='login')
 def delete_post(request, post_id):
+    """
+            Handles deletion of posts by users with appropriate permissions.
+    """
     post = Post.objects.get(pk=post_id)
 
     if request.method == 'POST':
@@ -292,10 +297,12 @@ def delete_post(request, post_id):
     return redirect(request.META.get('HTTP_REFERER'))
     
 @login_required
-@permission_required('your_app_name.can_delete_events', raise_exception=True)
 def delete_event(request, event_id):
+    """
+        Handles deletion of events by users with appropriate permissions.
+    """
     event = get_object_or_404(Event, pk=event_id)
-    if request.user == event.host.user or request.user.has_perm('your_app_name.can_delete_events'):
+    if request.user == event.host.user:
         if request.method == 'POST':
             event.delete()
             messages.success(request, 'Event deleted successfully.')
@@ -309,11 +316,17 @@ def delete_event(request, event_id):
 
 
 def index(request):
+    """
+        Renders the index page.
+    """
     return render(request, 'index.html')
 
 
 @login_required(login_url='login')
 def group_list(request):
+    """
+        Renders the list of groups a user is in and allows creation of new groups.
+    """
     user = request.user
 
     if request.method == 'POST':
@@ -336,6 +349,9 @@ def group_list(request):
 
 @login_required(login_url='login')
 def group_view(request, group_name):
+    """
+        Renders the group page with details and posts related to the group.
+    """
     user_profile = Profile.objects.get(user=request.user)
     grp = Group.objects.get(group_name=group_name)
     posts = Post.objects.filter(group_tags=grp)
