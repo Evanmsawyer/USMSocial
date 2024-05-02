@@ -1,5 +1,5 @@
 """
-ASGI config for socialProject project.
+ASGI config for social_project project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -16,7 +16,7 @@ from chat import routing
 
 django_asgi_app = get_asgi_application()
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'socialProject.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'social_project.settings')
 
 application = ProtocolTypeRouter({
     "http": django_asgi_app,
@@ -27,4 +27,4 @@ application = ProtocolTypeRouter({
     )
 })
 
-ASGI_APPLICATION = "socialProject.asgi.application"
+ASGI_APPLICATION = "social_project.asgi.application"
