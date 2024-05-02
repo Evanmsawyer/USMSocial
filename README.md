@@ -23,12 +23,21 @@ We want to thank [Dr. Song](https://yuqi-song.github.io/) for allowing us to wor
 - Delete posts and comments
 
 ## Usage
-
-![usage](img/terminal.gif)
+- Make migrations
+```bash
+python3 manage.py makemigrations
+```
+- Migrate
+```bash
+python3 manage.py migrate
+```
+- Run server
+```bash
+python3 manage.py runserver
+```
 <hr/>
 
-- #### Make migrations and run the server
-![run](img/carbon.png)
+![usage](img/terminal.gif)
 
 
 
